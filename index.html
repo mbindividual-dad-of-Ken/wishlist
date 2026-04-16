@@ -403,16 +403,12 @@ async function api(params) {
 }
 async function apiPost(body) {
   // Use GET instead of POST to avoid CORS preflight issues with GAS
-  const params = { action: body.action };
-  if (body.id)       params.id       = String(body.id);
-  if (body.item)     params.item     = JSON.stringify(body.item);
-  if (body.base64)   params.base64   = body.base64;
-  if (body.filename) params.filename = body.filename;
-  // Build URL manually to avoid URLSearchParams double-encoding
-  const qs = Object.entries(params)
-    .map(([k,v]) => k + '=' + encodeURIComponent(v))
-    .join('&');
-  const res = await fetch(API + '?' + qs);
+  const params = new URLSearchParams({ action: body.action });
+  if (body.id)       params.set('id',       String(body.id));
+  if (body.item)     params.set('item',     JSON.stringify(body.item));
+  if (body.base64)   params.set('base64',   body.base64);
+  if (body.filename) params.set('filename', body.filename);
+  const res = await fetch(API + '?' + params.toString());
   return res.json();
 }
 
