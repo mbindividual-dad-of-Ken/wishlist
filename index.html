@@ -13,7 +13,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
-
   <style>
     :root {
       --bg:      #0f0f0f;
@@ -38,36 +37,39 @@
     body { min-height: 100dvh; padding-bottom: env(safe-area-inset-bottom); }
     #app { max-width: 480px; margin: 0 auto; padding-bottom: 80px; }
 
-    /* Topbar */
     .topbar { position: sticky; top: 0; z-index: 50; background: var(--bg); border-bottom: 1px solid var(--border); padding: 13px 16px; display: flex; align-items: center; justify-content: space-between; }
     .topbar-title { font-size: 17px; font-weight: 700; }
     .topbar-title em { color: var(--accent); font-style: normal; }
     .sync-pill { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text3); background: var(--bg2); border: 1px solid var(--border); border-radius: 100px; padding: 4px 10px; cursor: pointer; }
-    .sync-pill:hover { border-color: var(--border2); }
     .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
     .dot.ok   { background: var(--success); }
     .dot.busy { background: var(--accent); animation: blink .7s infinite alternate; }
     .dot.err  { background: var(--danger); }
     @keyframes blink { from{opacity:.3}to{opacity:1} }
 
-    /* Stats */
-    .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; padding: 10px 16px; }
-    .stat { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 8px 6px; text-align: center; }
-    .stat-v { font-size: 18px; font-weight: 700; }
-    .stat-v.acc { color: var(--accent); }
+    .stats { padding: 10px 16px; display: flex; flex-direction: column; gap: 6px; }
+    .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
+    .stat { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 7px 6px; text-align: center; }
+    .stat-v { font-size: 16px; font-weight: 700; }
+    .stat-v.c-must { color: #e05c5c; }
+    .stat-v.c-need { color: #e8b86d; }
+    .stat-v.c-want { color: #5b9bd5; }
+    .stat-v.c-got  { color: #5ca87a; }
     .stat-l { font-size: 10px; color: var(--text3); margin-top: 1px; }
+    .budget-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .budget-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
+    .budget-label { font-size: 11px; color: var(--text3); }
+    .budget-val { font-size: 15px; font-weight: 700; color: var(--accent); }
+    .budget-val.spent { color: var(--success); }
 
-    /* Nav */
     .nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 480px; background: var(--bg); border-top: 1px solid var(--border); display: flex; padding-bottom: env(safe-area-inset-bottom); z-index: 50; }
     .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 10px 0; background: none; border: none; cursor: pointer; font-size: 10px; color: var(--text3); font-family: inherit; transition: color .15s; }
     .nav-btn.active { color: var(--accent); }
     .nav-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
-    /* Pages */
     .page { display: none; }
     .page.active { display: block; }
 
-    /* URL 輸入區 */
     .url-section { padding: 14px 16px 0; }
     .url-box { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--rl); padding: 12px 14px; }
     .url-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
@@ -79,7 +81,6 @@
     .fetch-btn:hover { background: var(--accent2); }
     .fetch-btn:disabled { opacity: .45; cursor: not-allowed; }
 
-    /* 抓取狀態 */
     .fetch-status { margin-top: 10px; border-radius: var(--r); padding: 9px 12px; font-size: 13px; display: none; align-items: center; gap: 8px; }
     .fetch-status.loading { display: flex; background: var(--bg3); color: var(--text2); }
     .fetch-status.success { display: flex; background: rgba(92,168,122,.12); color: var(--success); border: 1px solid rgba(92,168,122,.25); }
@@ -87,7 +88,6 @@
     .sp-sm { width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.15); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; flex-shrink: 0; }
     @keyframes spin { to{transform:rotate(360deg)} }
 
-    /* 預覽卡 */
     .preview-card { margin-top: 10px; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--r); padding: 10px; display: none; align-items: flex-start; gap: 10px; }
     .preview-card.show { display: flex; }
     .preview-thumb { width: 58px; height: 58px; border-radius: 8px; object-fit: cover; background: var(--bg4); flex-shrink: 0; }
@@ -96,7 +96,6 @@
     .preview-shop  { font-size: 11px; color: var(--text3); margin-top: 2px; }
     .preview-hint  { font-size: 11px; color: var(--text3); margin-top: 5px; }
 
-    /* 表單 */
     .form-section { padding: 12px 16px 0; }
     .form-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--rl); padding: 14px; margin-bottom: 10px; }
     .form-card-title { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
@@ -112,7 +111,6 @@
     .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     textarea { resize: none; min-height: 68px; line-height: 1.5; }
 
-    /* 圖片區 */
     .img-zone { width: 100%; aspect-ratio: 16/9; max-height: 160px; background: var(--bg3); border: 1px dashed var(--border2); border-radius: var(--r); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; overflow: hidden; position: relative; }
     .img-zone img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .img-zone .iz-icon { stroke: var(--text3); fill: none; stroke-width: 1.5; width: 22px; height: 22px; }
@@ -122,7 +120,6 @@
     .has-img .iz-icon, .has-img .iz-label { display: none; }
     input[type=file] { display: none; }
 
-    /* Buttons */
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 11px 18px; font-size: 14px; font-family: inherit; font-weight: 500; border-radius: var(--r); border: 1px solid var(--border2); background: transparent; color: var(--text); cursor: pointer; transition: all .15s; }
     .btn:hover { background: var(--bg3); }
     .btn:active { transform: scale(.97); }
@@ -131,10 +128,10 @@
     .btn.full { width: 100%; }
     .btn-row { display: flex; gap: 8px; margin-top: 4px; }
 
-    /* 清單 */
     .filter-bar { padding: 10px 16px; display: flex; gap: 8px; flex-wrap: wrap; position: sticky; top: 57px; z-index: 40; background: var(--bg); border-bottom: 1px solid var(--border); }
     .filter-bar input { flex: 1; min-width: 100px; font-size: 13px; padding: 7px 10px; }
     .filter-bar select { font-size: 13px; padding: 7px 8px; }
+
     .card-list { padding: 10px 16px; display: flex; flex-direction: column; gap: 9px; }
     .item-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--rl); overflow: hidden; display: flex; animation: fadeUp .2s ease both; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none} }
@@ -142,26 +139,28 @@
     .item-thumb img { width: 100%; height: 100%; object-fit: cover; }
     .item-body { flex: 1; padding: 10px 11px; min-width: 0; }
     .item-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 3px; }
-    .item-price { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 5px; }
+    .item-price { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 3px; }
+    .item-date { font-size: 10px; color: var(--text3); margin-bottom: 5px; }
     .item-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
     .badge { font-size: 10px; padding: 2px 7px; border-radius: 100px; background: var(--bg3); color: var(--text3); border: 1px solid var(--border); }
-    .badge.want   { background: rgba(91,155,213,.12); color: var(--info);    border-color: rgba(91,155,213,.25); }
-    .badge.bought { background: rgba(92,168,122,.12); color: var(--success); border-color: rgba(92,168,122,.25); }
-    .badge.skip   { background: var(--bg3); color: var(--text3); }
-    .badge.high   { background: rgba(224,92,92,.12); color: var(--danger);   border-color: rgba(224,92,92,.25); }
-    .badge.med    { background: rgba(232,184,109,.12); color: var(--accent); border-color: rgba(232,184,109,.25); }
-    .badge.low    { background: var(--bg3); color: var(--text3); }
+    .b-must  { background: rgba(224,92,92,.12);   color: #e05c5c;          border-color: rgba(224,92,92,.3); }
+    .b-need  { background: rgba(232,184,109,.12); color: var(--accent);    border-color: rgba(232,184,109,.3); }
+    .b-want  { background: rgba(91,155,213,.12);  color: var(--info);      border-color: rgba(91,155,213,.3); }
+    .b-got   { background: rgba(92,168,122,.12);  color: var(--success);   border-color: rgba(92,168,122,.3); }
+    .b-high  { background: rgba(224,92,92,.12);   color: #e05c5c;          border-color: rgba(224,92,92,.25); }
+    .b-med   { background: rgba(232,184,109,.12); color: var(--accent);    border-color: rgba(232,184,109,.25); }
+    .b-low   { background: var(--bg3); color: var(--text3); }
     .item-note { font-size: 11px; color: var(--text3); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 6px; }
     .item-actions { display: flex; gap: 5px; align-items: center; }
     .item-actions a { font-size: 11px; color: var(--info); text-decoration: none; }
-    .ia-btn { font-size: 11px; padding: 3px 7px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text3); cursor: pointer; font-family: inherit; transition: all .12s; }
+    .ia-btn { font-size: 11px; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--text3); cursor: pointer; font-family: inherit; transition: all .12s; }
     .ia-btn:hover { background: var(--bg3); color: var(--text); }
     .ia-btn.del { color: var(--danger); border-color: transparent; }
     .ia-btn.del:hover { background: rgba(224,92,92,.1); }
+
     .empty { text-align: center; padding: 60px 20px; color: var(--text3); font-size: 13px; }
     .empty-icon { font-size: 36px; margin-bottom: 10px; }
 
-    /* Loading 上傳進度 */
     .upload-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.6); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; z-index: 200; }
     .upload-overlay .sp { width: 32px; height: 32px; border: 3px solid rgba(255,255,255,.15); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
     .upload-overlay p { font-size: 14px; color: var(--text2); }
@@ -172,17 +171,15 @@
     #loading .logo { font-size: 30px; font-weight: 700; color: var(--accent); }
     #loading .sp { width: 22px; height: 22px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
 
-    /* 密碼頁 */
-    #lock-screen { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; z-index: 2000; padding: 32px; }
+    #lock-screen { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2000; padding: 32px; }
     .lock-logo { font-size: 36px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
     .lock-sub { font-size: 13px; color: var(--text3); margin-bottom: 32px; }
     .lock-box { width: 100%; max-width: 320px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--rl); padding: 24px; }
-    .lock-label { font-size: 12px; color: var(--text3); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .08em; }
-    .lock-input { width: 100%; background: var(--bg3); color: var(--text); border: 1px solid var(--border2); border-radius: var(--r); padding: 12px 14px; font-size: 18px; font-family: 'DM Mono', monospace, inherit; outline: none; letter-spacing: .15em; text-align: center; transition: border-color .15s; margin-bottom: 12px; }
-    .lock-input:focus { border-color: var(--accent); }
-    .lock-btn { width: 100%; padding: 12px; background: var(--accent); color: #0f0f0f; border: none; border-radius: var(--r); font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all .15s; }
-    .lock-btn:hover { background: var(--accent2); }
-    .lock-btn:active { transform: scale(.97); }
+    .lock-lbl { font-size: 12px; color: var(--text3); margin-bottom: 8px; text-transform: uppercase; letter-spacing: .08em; }
+    .lock-inp { width: 100%; background: var(--bg3); color: var(--text); border: 1px solid var(--border2); border-radius: var(--r); padding: 12px 14px; font-size: 18px; font-family: inherit; outline: none; letter-spacing: .15em; text-align: center; transition: border-color .15s; margin-bottom: 12px; }
+    .lock-inp:focus { border-color: var(--accent); }
+    .lock-btn-go { width: 100%; padding: 12px; background: var(--accent); color: #0f0f0f; border: none; border-radius: var(--r); font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all .15s; }
+    .lock-btn-go:hover { background: var(--accent2); }
     .lock-err { font-size: 12px; color: var(--danger); text-align: center; margin-top: 10px; min-height: 18px; }
     .lock-shake { animation: shake .35s ease; }
     @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
@@ -190,48 +187,54 @@
 </head>
 <body>
 
-<!-- 密碼鎖定頁 -->
 <div id="lock-screen" style="display:none">
   <div class="lock-logo">收藏</div>
   <div class="lock-sub">請輸入密碼以繼續</div>
   <div class="lock-box">
-    <div class="lock-label">密碼</div>
-    <input class="lock-input" id="lock-input" type="password" placeholder="••••••••" maxlength="20"
-      onkeydown="if(event.key==='Enter') checkPassword()" />
-    <button class="lock-btn" onclick="checkPassword()">進入</button>
+    <div class="lock-lbl">密碼</div>
+    <input class="lock-inp" id="lock-input" type="password" placeholder="••••••••" maxlength="20"
+      onkeydown="if(event.key==='Enter')checkPassword()" />
+    <button class="lock-btn-go" onclick="checkPassword()">進入</button>
     <div class="lock-err" id="lock-err"></div>
   </div>
 </div>
 
-<div id="loading">
-  <div class="logo">收藏</div>
-  <div class="sp"></div>
-</div>
+<div id="loading"><div class="logo">收藏</div><div class="sp"></div></div>
 
 <div id="app" style="display:none">
   <div class="topbar">
     <div class="topbar-title">商品<em>收藏</em></div>
-    <div class="sync-pill" onclick="loadItems()" title="點擊重新同步">
+    <div class="sync-pill" onclick="loadItems()">
       <div class="dot busy" id="sync-dot"></div>
       <span id="sync-label">載入中</span>
     </div>
   </div>
 
   <div class="stats">
-    <div class="stat"><div class="stat-v" id="s-all">0</div><div class="stat-l">全部</div></div>
-    <div class="stat"><div class="stat-v" id="s-want">0</div><div class="stat-l">想買</div></div>
-    <div class="stat"><div class="stat-v" id="s-bought">0</div><div class="stat-l">已買</div></div>
-    <div class="stat"><div class="stat-v acc" id="s-budget">$0</div><div class="stat-l">預算</div></div>
+    <div class="stats-row">
+      <div class="stat"><div class="stat-v c-must" id="s-must">0</div><div class="stat-l">必要</div></div>
+      <div class="stat"><div class="stat-v c-need" id="s-need">0</div><div class="stat-l">需要</div></div>
+      <div class="stat"><div class="stat-v c-want" id="s-want">0</div><div class="stat-l">想要</div></div>
+      <div class="stat"><div class="stat-v c-got"  id="s-got">0</div><div class="stat-l">已得到</div></div>
+    </div>
+    <div class="budget-row">
+      <div class="budget-card">
+        <div class="budget-label">待購預算合計</div>
+        <div class="budget-val" id="s-budget">$0</div>
+      </div>
+      <div class="budget-card">
+        <div class="budget-label">已花費金額</div>
+        <div class="budget-val spent" id="s-spent">$0</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Page: Add -->
   <div id="page-add" class="page active">
-
     <div class="url-section">
       <div class="url-box">
         <div class="url-label">貼上商品網址，自動抓取資訊</div>
         <div class="url-row">
-          <input id="inp-url" placeholder="https://shopee.tw/..." oninput="onUrlInput()" />
+          <input id="inp-url" placeholder="https://..." oninput="onUrlInput()" />
           <button class="fetch-btn" id="fetch-btn" onclick="doFetch()" disabled>
             <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             抓取
@@ -241,9 +244,9 @@
         <div class="preview-card" id="preview-card">
           <img class="preview-thumb" id="preview-thumb" src="" alt="" />
           <div>
-            <div class="preview-name"  id="preview-name"></div>
+            <div class="preview-name" id="preview-name"></div>
             <div class="preview-price" id="preview-price"></div>
-            <div class="preview-shop"  id="preview-shop"></div>
+            <div class="preview-shop" id="preview-shop"></div>
             <div class="preview-hint">↓ 可在下方修改或補充</div>
           </div>
         </div>
@@ -272,17 +275,26 @@
         </div>
         <div class="field row2">
           <div>
-            <label class="field-label">狀態</label>
-            <select id="f-status"><option value="want">想買</option><option value="bought">已買</option><option value="skip">略過</option></select>
+            <label class="field-label">分類</label>
+            <select id="f-status">
+              <option value="必要">必要</option>
+              <option value="需要">需要</option>
+              <option value="想要">想要</option>
+              <option value="已得到">已得到</option>
+            </select>
           </div>
           <div>
             <label class="field-label">優先度</label>
-            <select id="f-priority"><option value="high">高優先</option><option value="med">中優先</option><option value="low">低優先</option></select>
+            <select id="f-priority">
+              <option value="high">高優先</option>
+              <option value="med">中優先</option>
+              <option value="low">低優先</option>
+            </select>
           </div>
         </div>
         <div class="field">
           <label class="field-label">標籤（逗號分隔）</label>
-          <input id="f-tags" placeholder="3C, 耳機, 生日禮物" />
+          <input id="f-tags" placeholder="電器, 衣物, 生日禮物" />
         </div>
         <div class="field">
           <label class="field-label">備註</label>
@@ -314,15 +326,22 @@
     </div>
   </div>
 
-  <!-- Page: List -->
   <div id="page-list" class="page">
     <div class="filter-bar">
       <input id="q" placeholder="搜尋…" oninput="renderList()" />
       <select id="f-st" onchange="renderList()">
-        <option value="">全部</option><option value="want">想買</option><option value="bought">已買</option><option value="skip">略過</option>
+        <option value="">全部</option>
+        <option value="必要">必要</option>
+        <option value="需要">需要</option>
+        <option value="想要">想要</option>
+        <option value="已得到">已得到</option>
       </select>
       <select id="f-sort" onchange="renderList()">
-        <option value="newest">最新</option><option value="price-asc">價格↑</option><option value="price-desc">價格↓</option><option value="priority">優先</option>
+        <option value="newest">最新</option>
+        <option value="oldest">最舊</option>
+        <option value="price-asc">價格↑</option>
+        <option value="price-desc">價格↓</option>
+        <option value="priority">優先度</option>
       </select>
     </div>
     <div class="card-list" id="card-list"></div>
@@ -341,362 +360,20 @@
 <div id="toast"></div>
 
 <script>
-// 🔧 填入你的 GAS Web App 網址
-const API = 'https://script.google.com/macros/s/AKfycbw0R3rWGTUq3wIkx2UCmmLh_oTBpcih4vB9e2kNdb8sFBHFWg3ROajzmRVYnujhveLt/exec';
-
-let items     = [];
-let imgLocal  = null;   // 本地上傳的 base64（壓縮後）
-let imgRemote = null;   // 從網址抓到的遠端 URL
-let editingId = null;
-
-const sL = { want:'想買', bought:'已買', skip:'略過' };
-const pL = { high:'高', med:'中', low:'低' };
-const pR = { high:0, med:1, low:2 };
-
-// ── API 呼叫 ────────────────────────────────────────────────
-async function api(params) {
-  const url = API + '?' + new URLSearchParams(params);
-  const res = await fetch(url);
-  return res.json();
-}
-async function apiPost(body) {
-  const res = await fetch(API, { method:'POST', body: JSON.stringify(body) });
-  return res.json();
-}
-
-// ── 載入商品清單 ────────────────────────────────────────────
-async function loadItems() {
-  setSyncState('busy','同步中');
-  try {
-    const data = await api({ action:'list' });
-    if (data.error) throw new Error(data.error);
-    items = (data.items || []).reverse(); // 最新排前
-    updateStats();
-    renderList();
-    setSyncState('ok','已同步');
-  } catch(e) {
-    setSyncState('err','同步失敗');
-    toast('載入失敗：' + e.message);
-  }
-}
-
-// ── URL 抓取 ────────────────────────────────────────────────
-function onUrlInput() {
-  const v = document.getElementById('inp-url').value.trim();
-  document.getElementById('fetch-btn').disabled = !v.startsWith('http');
-}
-
-async function doFetch() {
-  const url = document.getElementById('inp-url').value.trim();
-  if (!url) return;
-  setFetchState('loading','正在抓取商品資訊…');
-  document.getElementById('fetch-btn').disabled = true;
-  document.getElementById('preview-card').classList.remove('show');
-  try {
-    const data = await api({ action:'fetch', url });
-    if (data.error) throw new Error(data.error);
-    if (!data.success) throw new Error('無法解析此頁面');
-    applyFetched(data);
-    setFetchState('success', `已抓取「${data.name.slice(0,22)}${data.name.length>22?'…':''}」`);
-  } catch(e) {
-    setFetchState('fail', `抓取失敗（${e.message}）— 請手動填寫`);
-    showFormManual();
-    const host = extractHost(url);
-    if (host) { document.getElementById('f-shop').value = host; ab('shop', false); }
-  }
-  document.getElementById('fetch-btn').disabled = false;
-}
-
-function applyFetched(d) {
-  if (d.name)  { document.getElementById('f-name').value  = d.name;  ab('name', true); }
-  if (d.price) { document.getElementById('f-price').value = d.price; ab('price', true); }
-  const shop = d.source || d.shop || '';
-  if (shop) { document.getElementById('f-shop').value = shop; ab('shop', true); }
-
-  imgRemote = d.imgUrl || null;
-  if (imgRemote) { setImgZone(imgRemote); ab('img', true); }
-
-  // 預覽
-  document.getElementById('preview-name').textContent  = d.name;
-  document.getElementById('preview-price').textContent = d.price ? 'NT$ ' + d.price.toLocaleString() : '';
-  document.getElementById('preview-shop').textContent  = shop;
-  const thumb = document.getElementById('preview-thumb');
-  thumb.src = d.imgUrl || ''; thumb.style.display = d.imgUrl ? '' : 'none';
-  document.getElementById('preview-card').classList.add('show');
-  document.getElementById('form-section').style.display = '';
-}
-
-function showFormManual() {
-  document.getElementById('form-section').style.display = '';
-  ['name','price','shop','img'].forEach(k => ab(k, false));
-  setTimeout(() => document.getElementById('form-section').scrollIntoView({ behavior:'smooth' }), 50);
-}
-
-function setFetchState(type, msg) {
-  const el = document.getElementById('fetch-status');
-  el.className = 'fetch-status ' + type;
-  el.innerHTML = type === 'loading'
-    ? `<div class="sp-sm"></div><span>${msg}</span>`
-    : `<span>${type==='success'?'✓':'✗'} ${msg}</span>`;
-}
-
-function ab(field, show) {
-  const el = document.getElementById('ab-' + field);
-  if (el) el.style.display = show ? '' : 'none';
-}
-
-function extractHost(url) {
-  try { return new URL(url).hostname.replace('www.',''); } catch(e) { return ''; }
-}
-
-// ── 圖片處理 ────────────────────────────────────────────────
-function triggerImg() { document.getElementById('file-inp').click(); }
-
-function handleImg(e) {
-  const file = e.target.files[0]; if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const tmp = new Image();
-    tmp.onload = () => {
-      const MAX = 800, c = document.createElement('canvas');
-      let w = tmp.width, h = tmp.height;
-      if (w > MAX || h > MAX) {
-        if (w > h) { h = Math.round(h*MAX/w); w = MAX; }
-        else       { w = Math.round(w*MAX/h); h = MAX; }
-      }
-      c.width = w; c.height = h;
-      c.getContext('2d').drawImage(tmp, 0, 0, w, h);
-      imgLocal  = c.toDataURL('image/jpeg', 0.75);
-      imgRemote = null;
-      setImgZone(imgLocal);
-      ab('img', false);
-    };
-    tmp.src = ev.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function setImgZone(src) {
-  const z = document.getElementById('img-zone');
-  let img = z.querySelector('img.zi');
-  if (!img) { img = document.createElement('img'); img.className='zi'; img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;'; z.prepend(img); }
-  img.src = src;
-  z.classList.add('has-img');
-}
-
-function clearImg(e) {
-  if (e) e.stopPropagation();
-  imgLocal = null; imgRemote = null;
-  document.getElementById('file-inp').value = '';
-  const z = document.getElementById('img-zone');
-  const img = z.querySelector('img.zi'); if (img) img.remove();
-  z.classList.remove('has-img');
-  ab('img', false);
-}
-
-// ── 儲存商品 ────────────────────────────────────────────────
-async function saveItem() {
-  const name = document.getElementById('f-name').value.trim();
-  if (!name) { toast('請填入商品名稱'); return; }
-
-  const btn = document.getElementById('save-btn');
-  btn.textContent = '儲存中…'; btn.disabled = true;
-
-  try {
-    let finalImgUrl = imgRemote || null;
-
-    // 有本地圖片 → 先上傳到 Drive
-    if (imgLocal) {
-      showUploadOverlay('上傳圖片到 Google Drive…');
-      const up = await apiPost({ action:'uploadImg', base64: imgLocal, filename: `img_${Date.now()}.jpg` });
-      hideUploadOverlay();
-      if (up.error) throw new Error('圖片上傳失敗：' + up.error);
-      finalImgUrl = up.imgUrl;
-    }
-
-    const item = {
-      name,
-      url:      document.getElementById('inp-url').value.trim(),
-      price:    parseFloat(document.getElementById('f-price').value) || 0,
-      shop:     document.getElementById('f-shop').value.trim(),
-      status:   document.getElementById('f-status').value,
-      priority: document.getElementById('f-priority').value,
-      tags:     document.getElementById('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
-      note:     document.getElementById('f-note').value.trim(),
-      imgUrl:   finalImgUrl,
-    };
-
-    let res;
-    if (editingId) {
-      res = await apiPost({ action:'update', id: editingId, item });
-      toast('已更新！');
-    } else {
-      res = await apiPost({ action:'save', item });
-      toast('儲存成功！');
-    }
-    if (res.error) throw new Error(res.error);
-
-    resetAll();
-    await loadItems();
-
-  } catch(e) {
-    hideUploadOverlay();
-    toast('失敗：' + e.message);
-  }
-
-  btn.textContent = editingId ? '更新商品' : '儲存商品';
-  btn.disabled = false;
-}
-
-// ── 刪除 ────────────────────────────────────────────────────
-async function deleteItem(id) {
-  if (!confirm('確定要刪除這件商品？')) return;
-  setSyncState('busy','刪除中');
-  try {
-    const res = await api({ action:'delete', id });
-    if (res.error) throw new Error(res.error);
-    items = items.filter(i => i.id !== id);
-    updateStats(); renderList();
-    setSyncState('ok','已同步');
-    toast('已刪除');
-  } catch(e) { setSyncState('err','失敗'); toast('刪除失敗'); }
-}
-
-// ── 切換狀態 ────────────────────────────────────────────────
-async function toggleStatus(id) {
-  const item = items.find(i => i.id === id); if (!item) return;
-  const next = { want:'bought', bought:'skip', skip:'want' }[item.status] || 'want';
-  try {
-    await apiPost({ action:'update', id, item: { ...item, status: next, tags: item.tags || [] } });
-    item.status = next;
-    updateStats(); renderList();
-  } catch(e) { toast('更新失敗'); }
-}
-
-// ── 編輯 ────────────────────────────────────────────────────
-function editItem(id) {
-  const item = items.find(i => i.id === id); if (!item) return;
-  editingId = id;
-  document.getElementById('inp-url').value    = item.url || '';
-  document.getElementById('f-name').value     = item.name || '';
-  document.getElementById('f-price').value    = item.price || '';
-  document.getElementById('f-shop').value     = item.shop || '';
-  document.getElementById('f-status').value   = item.status || 'want';
-  document.getElementById('f-priority').value = item.priority || 'high';
-  document.getElementById('f-tags').value     = (item.tags||[]).join(', ');
-  document.getElementById('f-note').value     = item.note || '';
-  if (item.imgUrl) { imgRemote = item.imgUrl; setImgZone(item.imgUrl); }
-  document.getElementById('form-section').style.display = '';
-  document.getElementById('save-btn').textContent = '更新商品';
-  showPage('add');
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
-
-// ── Reset ────────────────────────────────────────────────────
-function resetAll() {
-  document.getElementById('inp-url').value = '';
-  document.getElementById('fetch-status').className = 'fetch-status';
-  document.getElementById('fetch-status').innerHTML = '';
-  document.getElementById('preview-card').classList.remove('show');
-  document.getElementById('form-section').style.display = 'none';
-  document.getElementById('fetch-btn').disabled = true;
-  ['f-name','f-price','f-shop','f-tags','f-note'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('f-status').value   = 'want';
-  document.getElementById('f-priority').value = 'high';
-  clearImg();
-  editingId = null;
-  document.getElementById('save-btn').textContent = '儲存商品';
-  ['name','price','shop','img'].forEach(k => ab(k, false));
-}
-
-// ── Render ───────────────────────────────────────────────────
-function renderList() {
-  const q    = (document.getElementById('q')?.value||'').toLowerCase();
-  const fst  = document.getElementById('f-st')?.value||'';
-  const sort = document.getElementById('f-sort')?.value||'newest';
-
-  let list = items.filter(i => {
-    if (fst && i.status !== fst) return false;
-    if (q) { const h=[i.name,i.shop,i.note,...(i.tags||[])].join(' ').toLowerCase(); if(!h.includes(q)) return false; }
-    return true;
-  });
-
-  if (sort==='price-asc')  list.sort((a,b)=>a.price-b.price);
-  else if (sort==='price-desc') list.sort((a,b)=>b.price-a.price);
-  else if (sort==='priority')   list.sort((a,b)=>(pR[a.priority]||0)-(pR[b.priority]||0));
-
-  const el = document.getElementById('card-list');
-  if (!list.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">🛒</div><div>${q||fst?'沒有符合的商品':'還沒有收藏，從新增開始吧'}</div></div>`;
-    return;
-  }
-
-  el.innerHTML = list.map((item, idx) => `
-    <div class="item-card" style="animation-delay:${idx*.04}s">
-      <div class="item-thumb">${item.imgUrl?`<img src="${item.imgUrl}" alt="" loading="lazy">`:(item.shop?item.shop.charAt(0):'🛍')}</div>
-      <div class="item-body">
-        <div class="item-name" title="${item.name}">${item.name}</div>
-        ${item.price?`<div class="item-price">NT$ ${Number(item.price).toLocaleString()}</div>`:''}
-        <div class="item-badges">
-          <span class="badge ${item.status}">${sL[item.status]}</span>
-          <span class="badge ${item.priority}">${pL[item.priority]}優先</span>
-          ${(item.tags||[]).map(t=>`<span class="badge">${t}</span>`).join('')}
-        </div>
-        ${item.note?`<div class="item-note">${item.note}</div>`:''}
-        <div class="item-actions">
-          ${item.url?`<a href="${item.url}" target="_blank" rel="noopener">🔗</a>`:''}
-          <button class="ia-btn" onclick="toggleStatus('${item.id}')" style="margin-left:auto">切換</button>
-          <button class="ia-btn" onclick="editItem('${item.id}')">編輯</button>
-          <button class="ia-btn del" onclick="deleteItem('${item.id}')">刪除</button>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function updateStats() {
-  const want = items.filter(i=>i.status==='want');
-  const b    = want.filter(i=>i.price).reduce((s,i)=>s+Number(i.price),0);
-  document.getElementById('s-all').textContent    = items.length;
-  document.getElementById('s-want').textContent   = want.length;
-  document.getElementById('s-bought').textContent = items.filter(i=>i.status==='bought').length;
-  document.getElementById('s-budget').textContent = '$'+b.toLocaleString();
-}
-
-function showPage(p) {
-  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(el=>el.classList.remove('active'));
-  document.getElementById('page-'+p).classList.add('active');
-  document.getElementById('nav-'+p).classList.add('active');
-  if (p==='list') renderList();
-}
-
-function setSyncState(s, l) {
-  document.getElementById('sync-dot').className = 'dot ' + s;
-  document.getElementById('sync-label').textContent = l;
-}
-
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'), 2400);
-}
-
-function showUploadOverlay(msg) {
-  let ov = document.getElementById('upload-ov');
-  if (!ov) { ov = document.createElement('div'); ov.id='upload-ov'; ov.className='upload-overlay'; document.body.appendChild(ov); }
-  ov.innerHTML = `<div class="sp"></div><p>${msg}</p>`;
-  ov.style.display = 'flex';
-}
-function hideUploadOverlay() {
-  const ov = document.getElementById('upload-ov'); if(ov) ov.style.display='none';
-}
-
-// ── Init ─────────────────────────────────────────────────────
-// ── 密碼保護 ─────────────────────────────────────────────────
-const PASSWORD = '20230905';
+const API         = 'https://script.google.com/macros/s/AKfycbw0R3rWGTUq3wIkx2UCmmLh_oTBpcih4vB9e2kNdb8sFBHFWg3ROajzmRVYnujhveLt/exec';
+const PASSWORD    = '20230905';
 const SESSION_KEY = 'wl_auth';
 
+let items     = [];
+let imgLocal  = null;
+let imgRemote = null;
+let editingId = null;
+
+const pRank  = { high:0, med:1, low:2 };
+const pLabel = { high:'高優先', med:'中優先', low:'低優先' };
+const statusClass = { '必要':'b-must', '需要':'b-need', '想要':'b-want', '已得到':'b-got' };
+
+// ── 密碼 ─────────────────────────────────────────────────────
 function checkPassword() {
   const val = document.getElementById('lock-input').value;
   if (val === PASSWORD) {
@@ -719,6 +396,331 @@ async function startApp() {
   await loadItems();
 }
 
+// ── API ──────────────────────────────────────────────────────
+async function api(params) {
+  const res = await fetch(API + '?' + new URLSearchParams(params));
+  return res.json();
+}
+async function apiPost(body) {
+  const res = await fetch(API, { method:'POST', body: JSON.stringify(body), headers:{'Content-Type':'application/json'} });
+  return res.json();
+}
+
+// ── 載入 ─────────────────────────────────────────────────────
+async function loadItems() {
+  setSyncState('busy', '同步中');
+  try {
+    const data = await api({ action:'list' });
+    if (data.error) throw new Error(data.error);
+    items = (data.items || []).reverse();
+    updateStats();
+    if (document.getElementById('page-list').classList.contains('active')) renderList();
+    setSyncState('ok', '已同步');
+  } catch(e) {
+    setSyncState('err', '同步失敗');
+    toast('載入失敗：' + e.message);
+  }
+}
+
+// ── 抓取 ─────────────────────────────────────────────────────
+function onUrlInput() {
+  document.getElementById('fetch-btn').disabled = !document.getElementById('inp-url').value.trim().startsWith('http');
+}
+
+async function doFetch() {
+  const url = document.getElementById('inp-url').value.trim();
+  if (!url) return;
+  setFetchState('loading', '正在抓取商品資訊…');
+  document.getElementById('fetch-btn').disabled = true;
+  document.getElementById('preview-card').classList.remove('show');
+  try {
+    const data = await api({ action:'fetch', url });
+    if (data.error) throw new Error(data.error);
+    if (!data.success) throw new Error('無法解析此頁面');
+    applyFetched(data);
+    setFetchState('success', `已抓取「${data.name.slice(0,22)}${data.name.length>22?'…':''}」`);
+  } catch(e) {
+    setFetchState('fail', `抓取失敗（${e.message}）— 請手動填寫`);
+    showFormManual();
+    const host = extractHost(url);
+    if (host) { document.getElementById('f-shop').value = host; }
+  }
+  document.getElementById('fetch-btn').disabled = false;
+}
+
+function applyFetched(d) {
+  if (d.name)  { document.getElementById('f-name').value  = d.name;  ab('name', true); }
+  if (d.price) { document.getElementById('f-price').value = d.price; ab('price', true); }
+  const shop = d.source || d.shop || '';
+  if (shop) { document.getElementById('f-shop').value = shop; ab('shop', true); }
+  imgRemote = d.imgUrl || null;
+  if (imgRemote) { setImgZone(imgRemote); ab('img', true); }
+  document.getElementById('preview-name').textContent  = d.name;
+  document.getElementById('preview-price').textContent = d.price ? 'NT$ ' + d.price.toLocaleString() : '';
+  document.getElementById('preview-shop').textContent  = shop;
+  const thumb = document.getElementById('preview-thumb');
+  thumb.src = d.imgUrl || ''; thumb.style.display = d.imgUrl ? '' : 'none';
+  document.getElementById('preview-card').classList.add('show');
+  document.getElementById('form-section').style.display = '';
+}
+
+function showFormManual() {
+  document.getElementById('form-section').style.display = '';
+  ['name','price','shop','img'].forEach(k => ab(k, false));
+  setTimeout(() => document.getElementById('form-section').scrollIntoView({ behavior:'smooth' }), 50);
+}
+
+function setFetchState(type, msg) {
+  const el = document.getElementById('fetch-status');
+  el.className = 'fetch-status ' + type;
+  el.innerHTML = type === 'loading' ? `<div class="sp-sm"></div><span>${msg}</span>` : `<span>${type==='success'?'✓':'✗'} ${msg}</span>`;
+}
+
+function ab(field, show) {
+  const el = document.getElementById('ab-' + field);
+  if (el) el.style.display = show ? '' : 'none';
+}
+
+function extractHost(url) {
+  try { return new URL(url).hostname.replace('www.',''); } catch(e) { return ''; }
+}
+
+// ── 圖片 ─────────────────────────────────────────────────────
+function triggerImg() { document.getElementById('file-inp').click(); }
+
+function handleImg(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const tmp = new Image();
+    tmp.onload = () => {
+      const MAX = 800, c = document.createElement('canvas');
+      let w = tmp.width, h = tmp.height;
+      if (w > MAX || h > MAX) { if (w > h) { h = Math.round(h*MAX/w); w = MAX; } else { w = Math.round(w*MAX/h); h = MAX; } }
+      c.width = w; c.height = h;
+      c.getContext('2d').drawImage(tmp, 0, 0, w, h);
+      imgLocal = c.toDataURL('image/jpeg', 0.75); imgRemote = null;
+      setImgZone(imgLocal); ab('img', false);
+    };
+    tmp.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function setImgZone(src) {
+  const z = document.getElementById('img-zone');
+  let img = z.querySelector('img.zi');
+  if (!img) { img = document.createElement('img'); img.className='zi'; img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;'; z.prepend(img); }
+  img.src = src; z.classList.add('has-img');
+}
+
+function clearImg(e) {
+  if (e) e.stopPropagation();
+  imgLocal = null; imgRemote = null;
+  document.getElementById('file-inp').value = '';
+  const z = document.getElementById('img-zone');
+  const img = z.querySelector('img.zi'); if (img) img.remove();
+  z.classList.remove('has-img'); ab('img', false);
+}
+
+// ── 儲存 ─────────────────────────────────────────────────────
+async function saveItem() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { toast('請填入商品名稱'); return; }
+  const btn = document.getElementById('save-btn');
+  btn.textContent = '儲存中…'; btn.disabled = true;
+  try {
+    let finalImgUrl = imgRemote || null;
+    if (imgLocal) {
+      showUploadOverlay('上傳圖片到 Google Drive…');
+      const up = await apiPost({ action:'uploadImg', base64: imgLocal, filename:`img_${Date.now()}.jpg` });
+      hideUploadOverlay();
+      if (up.error) throw new Error('圖片上傳失敗：' + up.error);
+      finalImgUrl = up.imgUrl;
+    }
+    const item = {
+      name, url: document.getElementById('inp-url').value.trim(),
+      price: parseFloat(document.getElementById('f-price').value) || 0,
+      shop: document.getElementById('f-shop').value.trim(),
+      status: document.getElementById('f-status').value,
+      priority: document.getElementById('f-priority').value,
+      tags: document.getElementById('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
+      note: document.getElementById('f-note').value.trim(),
+      imgUrl: finalImgUrl,
+    };
+    const res = editingId
+      ? await apiPost({ action:'update', id: editingId, item })
+      : await apiPost({ action:'save', item });
+    if (res.error) throw new Error(res.error);
+    toast(editingId ? '已更新！' : '儲存成功！');
+    resetAll();
+    await loadItems();
+  } catch(e) {
+    hideUploadOverlay();
+    toast('失敗：' + e.message);
+  }
+  btn.textContent = editingId ? '更新商品' : '儲存商品';
+  btn.disabled = false;
+}
+
+// ── 刪除 ─────────────────────────────────────────────────────
+async function deleteItem(id) {
+  if (!confirm('確定要刪除這件商品？')) return;
+  setSyncState('busy', '刪除中');
+  try {
+    const res = await apiPost({ action:'delete', id: String(id) });
+    if (res.error) throw new Error(res.error);
+    items = items.filter(i => String(i.id) !== String(id));
+    updateStats(); renderList();
+    setSyncState('ok', '已同步'); toast('已刪除');
+  } catch(e) {
+    setSyncState('err', '失敗'); toast('刪除失敗：' + e.message);
+  }
+}
+
+// ── 切換分類 ─────────────────────────────────────────────────
+async function toggleStatus(id) {
+  const item = items.find(i => String(i.id) === String(id)); if (!item) return;
+  const cycle = ['必要','需要','想要','已得到'];
+  const next = cycle[(cycle.indexOf(item.status) + 1) % cycle.length];
+  try {
+    await apiPost({ action:'update', id: String(id), item: { ...item, status: next, tags: item.tags || [] } });
+    item.status = next; updateStats(); renderList();
+  } catch(e) { toast('更新失敗'); }
+}
+
+// ── 編輯 ─────────────────────────────────────────────────────
+function editItem(id) {
+  const item = items.find(i => String(i.id) === String(id)); if (!item) return;
+  editingId = String(id);
+  document.getElementById('inp-url').value    = item.url || '';
+  document.getElementById('f-name').value     = item.name || '';
+  document.getElementById('f-price').value    = item.price || '';
+  document.getElementById('f-shop').value     = item.shop || '';
+  document.getElementById('f-status').value   = item.status || '需要';
+  document.getElementById('f-priority').value = item.priority || 'high';
+  document.getElementById('f-tags').value     = (item.tags||[]).join(', ');
+  document.getElementById('f-note').value     = item.note || '';
+  if (item.imgUrl) { imgRemote = item.imgUrl; setImgZone(item.imgUrl); }
+  document.getElementById('form-section').style.display = '';
+  document.getElementById('save-btn').textContent = '更新商品';
+  showPage('add');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+// ── Reset ─────────────────────────────────────────────────────
+function resetAll() {
+  document.getElementById('inp-url').value = '';
+  document.getElementById('fetch-status').className = 'fetch-status';
+  document.getElementById('fetch-status').innerHTML = '';
+  document.getElementById('preview-card').classList.remove('show');
+  document.getElementById('form-section').style.display = 'none';
+  document.getElementById('fetch-btn').disabled = true;
+  ['f-name','f-price','f-shop','f-tags','f-note'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-status').value   = '需要';
+  document.getElementById('f-priority').value = 'high';
+  clearImg(); editingId = null;
+  document.getElementById('save-btn').textContent = '儲存商品';
+  ['name','price','shop','img'].forEach(k => ab(k, false));
+}
+
+// ── Render ────────────────────────────────────────────────────
+function renderList() {
+  const q    = (document.getElementById('q')?.value||'').toLowerCase();
+  const fst  = document.getElementById('f-st')?.value||'';
+  const sort = document.getElementById('f-sort')?.value||'newest';
+
+  let list = items.filter(i => {
+    if (fst && i.status !== fst) return false;
+    if (q) { const h=[i.name,i.shop,i.note,...(i.tags||[])].join(' ').toLowerCase(); if(!h.includes(q)) return false; }
+    return true;
+  });
+
+  if (sort==='price-asc')  list.sort((a,b) => a.price - b.price);
+  else if (sort==='price-desc') list.sort((a,b) => b.price - a.price);
+  else if (sort==='priority')   list.sort((a,b) => (pRank[a.priority]||0) - (pRank[b.priority]||0));
+  else if (sort==='oldest')     list.sort((a,b) => new Date(a.createdAt||0) - new Date(b.createdAt||0));
+
+  const el = document.getElementById('card-list');
+  if (!list.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">🛒</div><div>${q||fst?'沒有符合的商品':'還沒有收藏，從新增開始吧'}</div></div>`;
+    return;
+  }
+
+  el.innerHTML = list.map((item, idx) => {
+    const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit'}) : '';
+    const sc = statusClass[item.status] || '';
+    const pc = item.priority === 'high' ? 'b-high' : item.priority === 'med' ? 'b-med' : 'b-low';
+    const idStr = String(item.id);
+    return `<div class="item-card" style="animation-delay:${idx*.04}s">
+      <div class="item-thumb">${item.imgUrl?`<img src="${item.imgUrl}" alt="" loading="lazy">`:(item.shop?item.shop.charAt(0):'🛍')}</div>
+      <div class="item-body">
+        <div class="item-name" title="${item.name}">${item.name}</div>
+        ${item.price?`<div class="item-price">NT$ ${Number(item.price).toLocaleString()}</div>`:''}
+        ${dateStr?`<div class="item-date">加入於 ${dateStr}</div>`:''}
+        <div class="item-badges">
+          <span class="badge ${sc}">${item.status}</span>
+          <span class="badge ${pc}">${pLabel[item.priority]||item.priority}</span>
+          ${(item.tags||[]).map(t=>`<span class="badge">${t}</span>`).join('')}
+        </div>
+        ${item.note?`<div class="item-note">${item.note}</div>`:''}
+        <div class="item-actions">
+          ${item.url?`<a href="${item.url}" target="_blank" rel="noopener">🔗</a>`:''}
+          <button class="ia-btn" style="margin-left:auto" onclick="toggleStatus('${idStr}')">切換</button>
+          <button class="ia-btn" onclick="editItem('${idStr}')">編輯</button>
+          <button class="ia-btn del" onclick="deleteItem('${idStr}')">刪除</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Stats ─────────────────────────────────────────────────────
+function updateStats() {
+  const must  = items.filter(i => i.status==='必要');
+  const need  = items.filter(i => i.status==='需要');
+  const want  = items.filter(i => i.status==='想要');
+  const got   = items.filter(i => i.status==='已得到');
+  const pending = [...must,...need,...want];
+  const budget = pending.filter(i=>i.price).reduce((s,i)=>s+Number(i.price),0);
+  const spent  = got.filter(i=>i.price).reduce((s,i)=>s+Number(i.price),0);
+  document.getElementById('s-must').textContent   = must.length;
+  document.getElementById('s-need').textContent   = need.length;
+  document.getElementById('s-want').textContent   = want.length;
+  document.getElementById('s-got').textContent    = got.length;
+  document.getElementById('s-budget').textContent = '$' + budget.toLocaleString();
+  document.getElementById('s-spent').textContent  = '$' + spent.toLocaleString();
+}
+
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.getElementById('nav-'+p).classList.add('active');
+  if (p==='list') renderList();
+}
+
+function setSyncState(s, l) {
+  document.getElementById('sync-dot').className = 'dot '+s;
+  document.getElementById('sync-label').textContent = l;
+}
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2400);
+}
+
+function showUploadOverlay(msg) {
+  let ov = document.getElementById('upload-ov');
+  if (!ov) { ov=document.createElement('div'); ov.id='upload-ov'; ov.className='upload-overlay'; document.body.appendChild(ov); }
+  ov.innerHTML=`<div class="sp"></div><p>${msg}</p>`; ov.style.display='flex';
+}
+function hideUploadOverlay() {
+  const ov = document.getElementById('upload-ov'); if(ov) ov.style.display='none';
+}
+
+// ── Init ──────────────────────────────────────────────────────
 window.addEventListener('load', () => {
   document.getElementById('loading').style.display = 'none';
   if (sessionStorage.getItem(SESSION_KEY) === '1') {
