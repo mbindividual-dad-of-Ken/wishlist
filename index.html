@@ -51,12 +51,17 @@
     .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; }
     .stat { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 7px 6px; text-align: center; }
     .stat-v { font-size: 16px; font-weight: 700; }
-    .stat-v.c-must { color: #e05c5c; }
-    .stat-v.c-need { color: #e8b86d; }
-    .stat-v.c-want { color: #5b9bd5; }
+    .stat-v.c-need { color: #e05c5c; }
+    .stat-v.c-love { color: #e8b86d; }
+    .stat-v.c-like { color: #5b9bd5; }
+    .stat-v.c-want { color: #6b6866; }
     .stat-v.c-got  { color: #5ca87a; }
     .stat-l { font-size: 10px; color: var(--text3); margin-top: 1px; }
     .budget-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .stats-hint { font-size: 10px; color: var(--text3); text-align: center; padding-top: 2px; }
+    .edit-bar { margin: 0 16px 10px; padding: 9px 12px; background: rgba(232,184,109,.1); border: 1px solid rgba(232,184,109,.3); border-radius: var(--r); display: none; align-items: center; justify-content: space-between; font-size: 12px; color: var(--accent); }
+    .edit-bar.show { display: flex; }
+    .edit-bar button { background: none; border: none; color: var(--text2); font-size: 12px; cursor: pointer; font-family: inherit; text-decoration: underline; }
     .budget-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--r); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
     .budget-label { font-size: 11px; color: var(--text3); }
     .budget-val { font-size: 15px; font-weight: 700; color: var(--accent); }
@@ -143,9 +148,10 @@
     .item-date { font-size: 10px; color: var(--text3); margin-bottom: 5px; }
     .item-badges { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
     .badge { font-size: 10px; padding: 2px 7px; border-radius: 100px; background: var(--bg3); color: var(--text3); border: 1px solid var(--border); }
-    .b-must  { background: rgba(224,92,92,.12);   color: #e05c5c;          border-color: rgba(224,92,92,.3); }
-    .b-need  { background: rgba(232,184,109,.12); color: var(--accent);    border-color: rgba(232,184,109,.3); }
-    .b-want  { background: rgba(91,155,213,.12);  color: var(--info);      border-color: rgba(91,155,213,.3); }
+    .b-need  { background: rgba(224,92,92,.12);   color: #e05c5c;          border-color: rgba(224,92,92,.3); }
+    .b-love  { background: rgba(232,184,109,.15); color: var(--accent);    border-color: rgba(232,184,109,.4); }
+    .b-like  { background: rgba(91,155,213,.12);  color: var(--info);      border-color: rgba(91,155,213,.3); }
+    .b-want  { background: var(--bg3);            color: var(--text3);     border-color: var(--border2); }
     .b-got   { background: rgba(92,168,122,.12);  color: var(--success);   border-color: rgba(92,168,122,.3); }
     .b-high  { background: rgba(224,92,92,.12);   color: #e05c5c;          border-color: rgba(224,92,92,.25); }
     .b-med   { background: rgba(232,184,109,.12); color: var(--accent);    border-color: rgba(232,184,109,.25); }
@@ -212,21 +218,22 @@
 
   <div class="stats">
     <div class="stats-row">
-      <div class="stat"><div class="stat-v c-must" id="s-must">0</div><div class="stat-l">必要</div></div>
-      <div class="stat"><div class="stat-v c-need" id="s-need">0</div><div class="stat-l">需要</div></div>
-      <div class="stat"><div class="stat-v c-want" id="s-want">0</div><div class="stat-l">想要</div></div>
-      <div class="stat"><div class="stat-v c-got"  id="s-got">0</div><div class="stat-l">已得到</div></div>
+      <div class="stat"><div class="stat-v c-need" id="s-need">0</div><div class="stat-l">需要 Need</div></div>
+      <div class="stat"><div class="stat-v c-love" id="s-love">0</div><div class="stat-l">熱愛 Love</div></div>
+      <div class="stat"><div class="stat-v c-like" id="s-like">0</div><div class="stat-l">喜歡 Like</div></div>
+      <div class="stat"><div class="stat-v c-want" id="s-want">0</div><div class="stat-l">想要 Want</div></div>
     </div>
     <div class="budget-row">
       <div class="budget-card">
-        <div class="budget-label">待購預算合計</div>
-        <div class="budget-val" id="s-budget">$0</div>
+        <div class="budget-label">投資在熱愛</div>
+        <div class="budget-val" id="s-love-budget">$0</div>
       </div>
       <div class="budget-card">
-        <div class="budget-label">已花費金額</div>
-        <div class="budget-val spent" id="s-spent">$0</div>
+        <div class="budget-label">喜歡＋想要（可省下）</div>
+        <div class="budget-val" id="s-lw-budget" style="color:var(--text3)">$0</div>
       </div>
     </div>
+    <div class="stats-hint">把 Like 和 Want 省下來，狠狠花在 Love 上</div>
   </div>
 
   <div id="page-add" class="page active">
@@ -253,6 +260,7 @@
       </div>
     </div>
 
+    <div class="edit-bar" id="edit-bar"><span>✏️ 正在編輯：<strong id="edit-bar-name"></strong></span><button onclick="resetAll()">取消編輯</button></div>
     <div class="form-section" id="form-section" style="display:none">
       <div class="form-card">
         <div class="form-card-title">
@@ -277,9 +285,10 @@
           <div>
             <label class="field-label">分類</label>
             <select id="f-status">
-              <option value="必要">必要</option>
-              <option value="需要">需要</option>
-              <option value="想要">想要</option>
+              <option value="需要">需要 Need：健康與安全生活所需</option>
+              <option value="熱愛">熱愛 Love：真心喜愛，值得狠狠花</option>
+              <option value="喜歡" selected>喜歡 Like：快樂約半年</option>
+              <option value="想要">想要 Want：一時滿足</option>
               <option value="已得到">已得到</option>
             </select>
           </div>
@@ -331,8 +340,9 @@
       <input id="q" placeholder="搜尋…" oninput="renderList()" />
       <select id="f-st" onchange="renderList()">
         <option value="">全部</option>
-        <option value="必要">必要</option>
         <option value="需要">需要</option>
+        <option value="熱愛">熱愛</option>
+        <option value="喜歡">喜歡</option>
         <option value="想要">想要</option>
         <option value="已得到">已得到</option>
       </select>
@@ -361,8 +371,7 @@
 
 <script>
 const API         = 'https://script.google.com/macros/s/AKfycbyZOHyGcoeM1MqKnUZEQjnsQqLlh1m7al7JzEbhBL94jCpOgSHoTX4uKJO9Z6I4am6F/exec';
-const PASSWORD    = '20230905';
-const SESSION_KEY = 'wl_auth';
+const SESSION_KEY = 'wl_key';
 
 let items     = [];
 let imgLocal  = null;
@@ -371,46 +380,68 @@ let editingId = null;
 
 const pRank  = { high:0, med:1, low:2 };
 const pLabel = { high:'高優先', med:'中優先', low:'低優先' };
-const statusClass = { '必要':'b-must', '需要':'b-need', '想要':'b-want', '已得到':'b-got' };
+/* Need/Love/Like/Want 分類（《聰明生活經濟學》四問）＋ 已得到 */
+const statusClass = { '需要':'b-need', '熱愛':'b-love', '喜歡':'b-like', '想要':'b-want', '已得到':'b-got' };
+const STATUS_CYCLE = ['需要','熱愛','喜歡','想要','已得到'];
+/* 舊資料相容：必要→需要；熱愛/喜歡不自動猜，由人重新分類 */
+function normalizeStatus(st) { return st === '必要' ? '需要' : (statusClass[st] ? st : '想要'); }
 
-// ── 密碼 ─────────────────────────────────────────────────────
-function checkPassword() {
-  const val = document.getElementById('lock-input').value;
-  if (val === PASSWORD) {
-    sessionStorage.setItem(SESSION_KEY, '1');
-    document.getElementById('lock-screen').style.display = 'none';
-    startApp();
-  } else {
-    const inp = document.getElementById('lock-input');
-    document.getElementById('lock-err').textContent = '密碼錯誤，請再試一次';
-    inp.value = '';
-    inp.classList.remove('lock-shake');
-    void inp.offsetWidth;
-    inp.classList.add('lock-shake');
-    inp.focus();
+/* 【修正】XSS 防護：商品名/備註/標籤來自外部網頁抓取，不可信任 */
+function esc(str) {
+  return String(str == null ? '' : str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+function safeUrl(u) {
+  try { const p = new URL(String(u||''), location.href); return (p.protocol==='http:'||p.protocol==='https:') ? p.href : ''; }
+  catch(e) { return ''; }
+}
+
+// ── 金鑰驗證（後端比對，前端不再硬編碼密碼）─────────────────
+async function checkPassword() {
+  const inp = document.getElementById('lock-input');
+  const val = inp.value.trim();
+  if (!val) return;
+  document.getElementById('lock-err').textContent = '驗證中…';
+  try {
+    const res = await apiPost({ action:'verifyKey', key: val });
+    if (res.ok) {
+      sessionStorage.setItem(SESSION_KEY, val);
+      document.getElementById('lock-screen').style.display = 'none';
+      startApp();
+      return;
+    }
+    document.getElementById('lock-err').textContent = res.locked ? '嘗試次數過多，請 10 分鐘後再試' : '密碼錯誤，請再試一次';
+  } catch(e) {
+    document.getElementById('lock-err').textContent = '連線失敗，請稍後再試';
   }
+  inp.value = '';
+  inp.classList.remove('lock-shake');
+  void inp.offsetWidth;
+  inp.classList.add('lock-shake');
+  inp.focus();
 }
 
 async function startApp() {
   document.getElementById('app').style.display = '';
   await loadItems();
+  /* manifest shortcuts：?page=list 直達清單 */
+  try { const p = new URLSearchParams(location.search).get('page'); if (p==='list') showPage('list'); } catch(e) {}
 }
 
 // ── API ──────────────────────────────────────────────────────
-async function api(params) {
-  const res = await fetch(API + '?' + new URLSearchParams(params));
-  return res.json();
-}
+// 【修正】全部改走 POST（text/plain 為 simple request，不觸發 CORS preflight）。
+// 原版把寫入與 base64 圖片塞進 GET query string：洩漏內容且圖片必超 URL 上限。
 async function apiPost(body) {
-  // Use GET instead of POST to avoid CORS preflight issues with GAS
-  const params = new URLSearchParams({ action: body.action });
-  if (body.id)       params.set('id',       String(body.id));
-  if (body.item)     params.set('item',     JSON.stringify(body.item));
-  if (body.base64)   params.set('base64',   body.base64);
-  if (body.filename) params.set('filename', body.filename);
-  const res = await fetch(API + '?' + params.toString());
-  return res.json();
+  const payload = Object.assign({ key: sessionStorage.getItem(SESSION_KEY) || '' }, body);
+  const res = await fetch(API, { method:'POST', body: JSON.stringify(payload) });
+  const data = await res.json();
+  if (data && data.error === 'UNAUTHORIZED') {
+    sessionStorage.removeItem(SESSION_KEY);
+    document.getElementById('lock-screen').style.display = 'flex';
+    throw new Error(data.locked ? '金鑰已鎖定，請稍後再試' : '金鑰失效，請重新登入');
+  }
+  return data;
 }
+const api = apiPost; /* 舊呼叫點相容 */
 
 // ── 載入 ─────────────────────────────────────────────────────
 async function loadItems() {
@@ -419,6 +450,7 @@ async function loadItems() {
     const data = await api({ action:'list' });
     if (data.error) throw new Error(data.error);
     items = (data.items || []).reverse();
+    items.forEach(i => { i.status = normalizeStatus(i.status); });
     updateStats();
     if (document.getElementById('page-list').classList.contains('active')) renderList();
     setSyncState('ok', '已同步');
@@ -459,13 +491,14 @@ function applyFetched(d) {
   if (d.price) { document.getElementById('f-price').value = d.price; ab('price', true); }
   const shop = d.source || d.shop || '';
   if (shop) { document.getElementById('f-shop').value = shop; ab('shop', true); }
-  imgRemote = d.imgUrl || null;
+  imgRemote = safeUrl(d.imgUrl) || null;
   if (imgRemote) { setImgZone(imgRemote); ab('img', true); }
   document.getElementById('preview-name').textContent  = d.name;
   document.getElementById('preview-price').textContent = d.price ? 'NT$ ' + d.price.toLocaleString() : '';
   document.getElementById('preview-shop').textContent  = shop;
   const thumb = document.getElementById('preview-thumb');
-  thumb.src = d.imgUrl || ''; thumb.style.display = d.imgUrl ? '' : 'none';
+  const pv = safeUrl(d.imgUrl);
+  thumb.src = pv; thumb.style.display = pv ? '' : 'none';
   document.getElementById('preview-card').classList.add('show');
   document.getElementById('form-section').style.display = '';
 }
@@ -587,8 +620,7 @@ async function deleteItem(id) {
 // ── 切換分類 ─────────────────────────────────────────────────
 async function toggleStatus(id) {
   const item = items.find(i => String(i.id) === String(id)); if (!item) return;
-  const cycle = ['必要','需要','想要','已得到'];
-  const next = cycle[(cycle.indexOf(item.status) + 1) % cycle.length];
+  const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(item.status) + 1) % STATUS_CYCLE.length];
   try {
     await apiPost({ action:'update', id: String(id), item: { ...item, status: next, tags: item.tags || [] } });
     item.status = next; updateStats(); renderList();
@@ -607,7 +639,11 @@ function editItem(id) {
   document.getElementById('f-priority').value = item.priority || 'high';
   document.getElementById('f-tags').value     = (item.tags||[]).join(', ');
   document.getElementById('f-note').value     = item.note || '';
-  if (item.imgUrl) { imgRemote = item.imgUrl; setImgZone(item.imgUrl); }
+  const eimg = safeUrl(item.imgUrl);
+  if (eimg) { imgRemote = eimg; setImgZone(eimg); }
+  /* 【修正】編輯狀態可視化：原本切走再填新品會靜默覆蓋舊商品 */
+  document.getElementById('edit-bar').classList.add('show');
+  document.getElementById('edit-bar-name').textContent = item.name || '';
   document.getElementById('form-section').style.display = '';
   document.getElementById('save-btn').textContent = '更新商品';
   showPage('add');
@@ -623,9 +659,10 @@ function resetAll() {
   document.getElementById('form-section').style.display = 'none';
   document.getElementById('fetch-btn').disabled = true;
   ['f-name','f-price','f-shop','f-tags','f-note'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('f-status').value   = '需要';
+  document.getElementById('f-status').value   = '喜歡';
   document.getElementById('f-priority').value = 'high';
   clearImg(); editingId = null;
+  document.getElementById('edit-bar').classList.remove('show');
   document.getElementById('save-btn').textContent = '儲存商品';
   ['name','price','shop','img'].forEach(k => ab(k, false));
 }
@@ -658,20 +695,23 @@ function renderList() {
     const sc = statusClass[item.status] || '';
     const pc = item.priority === 'high' ? 'b-high' : item.priority === 'med' ? 'b-med' : 'b-low';
     const idStr = String(item.id);
+    /* 【修正】商品名/備註/標籤來自外部網頁抓取，全面跳脫；網址限 http/https */
+    const imgSrc = safeUrl(item.imgUrl);
+    const linkUrl = safeUrl(item.url);
     return `<div class="item-card" style="animation-delay:${idx*.04}s">
-      <div class="item-thumb">${item.imgUrl?`<img src="${item.imgUrl}" alt="" loading="lazy">`:(item.shop?item.shop.charAt(0):'🛍')}</div>
+      <div class="item-thumb">${imgSrc?`<img src="${esc(imgSrc)}" alt="" loading="lazy">`:(item.shop?esc(String(item.shop).charAt(0)):'🛍')}</div>
       <div class="item-body">
-        <div class="item-name" title="${item.name}">${item.name}</div>
+        <div class="item-name" title="${esc(item.name)}">${esc(item.name)}</div>
         ${item.price?`<div class="item-price">NT$ ${Number(item.price).toLocaleString()}</div>`:''}
         ${dateStr?`<div class="item-date">加入於 ${dateStr}</div>`:''}
         <div class="item-badges">
-          <span class="badge ${sc}">${item.status}</span>
-          <span class="badge ${pc}">${pLabel[item.priority]||item.priority}</span>
-          ${(item.tags||[]).map(t=>`<span class="badge">${t}</span>`).join('')}
+          <span class="badge ${sc}">${esc(item.status)}</span>
+          <span class="badge ${pc}">${esc(pLabel[item.priority]||item.priority)}</span>
+          ${(item.tags||[]).map(t=>`<span class="badge">${esc(t)}</span>`).join('')}
         </div>
-        ${item.note?`<div class="item-note">${item.note}</div>`:''}
+        ${item.note?`<div class="item-note">${esc(item.note)}</div>`:''}
         <div class="item-actions">
-          ${item.url?`<a href="${item.url}" target="_blank" rel="noopener">🔗</a>`:''}
+          ${linkUrl?`<a href="${esc(linkUrl)}" target="_blank" rel="noopener">🔗</a>`:''}
           <button class="ia-btn" style="margin-left:auto" onclick="toggleStatus('${idStr}')">切換</button>
           <button class="ia-btn" onclick="editItem('${idStr}')">編輯</button>
           <button class="ia-btn del" onclick="deleteItem('${idStr}')">刪除</button>
@@ -683,19 +723,18 @@ function renderList() {
 
 // ── Stats ─────────────────────────────────────────────────────
 function updateStats() {
-  const must  = items.filter(i => i.status==='必要');
-  const need  = items.filter(i => i.status==='需要');
-  const want  = items.filter(i => i.status==='想要');
-  const got   = items.filter(i => i.status==='已得到');
-  const pending = [...must,...need,...want];
-  const budget = pending.filter(i=>i.price).reduce((s,i)=>s+Number(i.price),0);
-  const spent  = got.filter(i=>i.price).reduce((s,i)=>s+Number(i.price),0);
-  document.getElementById('s-must').textContent   = must.length;
-  document.getElementById('s-need').textContent   = need.length;
-  document.getElementById('s-want').textContent   = want.length;
-  document.getElementById('s-got').textContent    = got.length;
-  document.getElementById('s-budget').textContent = '$' + budget.toLocaleString();
-  document.getElementById('s-spent').textContent  = '$' + spent.toLocaleString();
+  const sum = list => list.filter(i=>i.price).reduce((s,i)=>s+Number(i.price),0);
+  const need = items.filter(i => i.status==='需要');
+  const love = items.filter(i => i.status==='熱愛');
+  const like = items.filter(i => i.status==='喜歡');
+  const want = items.filter(i => i.status==='想要');
+  document.getElementById('s-need').textContent = need.length;
+  document.getElementById('s-love').textContent = love.length;
+  document.getElementById('s-like').textContent = like.length;
+  document.getElementById('s-want').textContent = want.length;
+  /* 框架核心對比：該狠狠花的 vs 該省下來的 */
+  document.getElementById('s-love-budget').textContent = '$' + sum(love).toLocaleString();
+  document.getElementById('s-lw-budget').textContent   = '$' + sum([...like,...want]).toLocaleString();
 }
 
 function showPage(p) {
@@ -729,7 +768,7 @@ function hideUploadOverlay() {
 // ── Init ──────────────────────────────────────────────────────
 window.addEventListener('load', () => {
   document.getElementById('loading').style.display = 'none';
-  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+  if (sessionStorage.getItem(SESSION_KEY)) {
     startApp();
   } else {
     document.getElementById('lock-screen').style.display = 'flex';
