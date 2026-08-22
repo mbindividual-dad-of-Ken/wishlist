@@ -301,6 +301,15 @@
             </select>
           </div>
         </div>
+        <!-- 【新增】商品類型：取代原本塞進 tags 的「香水」標籤，改為結構化欄位，
+             切換時顯示/隱藏對應分類的擴充欄位區塊（見下方 #perfume-fields） -->
+        <div class="field">
+          <label class="field-label">商品類型</label>
+          <select id="f-category" onchange="togglePerfumeFields()">
+            <option value="">一般商品</option>
+            <option value="香水">香水</option>
+          </select>
+        </div>
         <div class="field">
           <label class="field-label">標籤（逗號分隔）</label>
           <input id="f-tags" placeholder="電器, 衣物, 生日禮物" />
@@ -309,6 +318,99 @@
           <label class="field-label">備註</label>
           <textarea id="f-note" placeholder="規格、尺寸、比較心得…"></textarea>
         </div>
+      </div>
+
+      <!-- 【新增】香水擴充欄位：只有商品類型＝香水時顯示。除名稱外全部可留白，
+           之後在清單裡「編輯」再補；用 <details> 分區摺疊，避免單一長表單。 -->
+      <div class="form-card" id="perfume-fields" style="display:none">
+        <div class="form-card-title">
+          <svg viewBox="0 0 24 24"><path d="M12 2v6M8 8h8l1 4H7l1-4zM6 12h12l1 8H5l1-8z"/></svg>
+          香水明細（可留白，之後再補）
+        </div>
+
+        <details open>
+          <summary style="font-size:12px;color:var(--text3);cursor:pointer;margin-bottom:8px">狀態與來源</summary>
+          <div class="field row2">
+            <div>
+              <label class="field-label">狀態</label>
+              <select id="p-item-status">
+                <option value="Wishlist">Wishlist</option>
+                <option value="試香過">試香過</option>
+                <option value="已擁有" selected>已擁有</option>
+                <option value="售出">售出</option>
+                <option value="用完">用完</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label">來源類型</label>
+              <select id="p-source-type">
+                <option value="手動" selected>手動輸入</option>
+                <option value="照片">照片辨識</option>
+                <option value="網址">網址</option>
+                <option value="品名">品名查詢</option>
+              </select>
+            </div>
+          </div>
+        </details>
+
+        <details style="margin-top:10px">
+          <summary style="font-size:12px;color:var(--text3);cursor:pointer;margin-bottom:8px">客觀資料（品牌標示，非你的感受）</summary>
+          <div class="field row2">
+            <div><label class="field-label">品牌</label><input id="p-brand" placeholder="Narciso Rodriguez" /></div>
+            <div><label class="field-label">英文名</label><input id="p-name-en" placeholder="Bleu Noir" /></div>
+          </div>
+          <div class="field row2">
+            <div><label class="field-label">版本</label><input id="p-edition" placeholder="for him" /></div>
+            <div><label class="field-label">年份</label><input id="p-year" type="number" placeholder="2016" /></div>
+          </div>
+          <div class="field row2">
+            <div><label class="field-label">容量（ml）</label><input id="p-size-ml" type="number" placeholder="100" /></div>
+            <div>
+              <label class="field-label">濃度</label>
+              <select id="p-concentration">
+                <option value="">未指定</option>
+                <option value="EDC">EDC 古龍水</option>
+                <option value="EDT">EDT 淡香水</option>
+                <option value="EDP">EDP 濃香水</option>
+                <option value="Parfum">Parfum 香精</option>
+                <option value="Extrait">Extrait 純香精</option>
+              </select>
+            </div>
+          </div>
+          <div class="field"><label class="field-label">前調（逗號分隔）</label><input id="p-notes-top" placeholder="Bergamot, Citrus" /></div>
+          <div class="field"><label class="field-label">中調（逗號分隔）</label><input id="p-notes-heart" placeholder="Leather, Spice" /></div>
+          <div class="field"><label class="field-label">後調（逗號分隔）</label><input id="p-notes-base" placeholder="Vetiver, Musk" /></div>
+          <div class="field"><label class="field-label">香調家族（逗號分隔）</label><input id="p-family" placeholder="Woody, Aromatic" /></div>
+          <div class="field row2">
+            <div><label class="field-label">持香（1-5）</label><input id="p-longevity" type="number" min="1" max="5" /></div>
+            <div><label class="field-label">擴散（1-5）</label><input id="p-sillage" type="number" min="1" max="5" /></div>
+          </div>
+          <div class="field row2">
+            <div><label class="field-label">甜度（1-5）</label><input id="p-sweetness" type="number" min="1" max="5" /></div>
+            <div><label class="field-label">清新度（1-5）</label><input id="p-freshness" type="number" min="1" max="5" /></div>
+          </div>
+          <div class="field"><label class="field-label">木質感（1-5）</label><input id="p-woody" type="number" min="1" max="5" /></div>
+          <div class="field"><label class="field-label">使用情境（逗號分隔）</label><input id="p-occasion" placeholder="上班, 約會, 正式" /></div>
+          <div class="field row2">
+            <div><label class="field-label">適合季節（逗號分隔）</label><input id="p-season" placeholder="秋, 冬" /></div>
+            <div><label class="field-label">適合時段（逗號分隔）</label><input id="p-daypart" placeholder="夜間" /></div>
+          </div>
+        </details>
+
+        <details style="margin-top:10px">
+          <summary style="font-size:12px;color:var(--text3);cursor:pointer;margin-bottom:8px">個人資料與感受（你自己聞到的，不是官方標示）</summary>
+          <div class="field row2">
+            <div><label class="field-label">入手價</label><input id="p-purchase-price" type="number" placeholder="0" /></div>
+            <div><label class="field-label">購入日期</label><input id="p-purchase-date" type="date" /></div>
+          </div>
+          <div class="field row2">
+            <div><label class="field-label">喜歡程度（1-5）</label><input id="p-rating" type="number" min="1" max="5" /></div>
+            <div><label class="field-label">持香滿意度（1-5）</label><input id="p-longevity-personal" type="number" min="1" max="5" /></div>
+          </div>
+          <div class="field"><label class="field-label">場合適用度（1-5）</label><input id="p-occasion-fit" type="number" min="1" max="5" /></div>
+          <div class="field"><label class="field-label">你聞到的調性（逗號分隔，可能跟官方標示不同）</label><input id="p-notes-personal" placeholder="偏木質不偏柑橘" /></div>
+          <div class="field"><label class="field-label">心得備註</label><textarea id="p-review" placeholder="實際使用心得…"></textarea></div>
+        </details>
       </div>
 
       <div class="form-card">
@@ -562,6 +664,63 @@ function clearImg(e) {
   z.classList.remove('has-img'); ab('img', false);
 }
 
+// ── 【新增】香水擴充欄位 ─────────────────────────────────────
+// 多值欄位（逗號分隔）與單值欄位分開列表，蒐集/填入時分別處理，
+// 跟主表 tags 欄位是同一種「陣列轉逗號字串存單格」慣例。
+const PERFUME_MULTI_FIELDS = ['notes_top','notes_heart','notes_base','family','occasion','season','daypart'];
+const PERFUME_FIELD_MAP = {
+  brand:'p-brand', name_en:'p-name-en', edition:'p-edition', year:'p-year',
+  size_ml:'p-size-ml', concentration:'p-concentration',
+  notes_top:'p-notes-top', notes_heart:'p-notes-heart', notes_base:'p-notes-base', family:'p-family',
+  perf_longevity:'p-longevity', perf_sillage:'p-sillage', perf_sweetness:'p-sweetness',
+  perf_freshness:'p-freshness', perf_woody:'p-woody',
+  occasion:'p-occasion', season:'p-season', daypart:'p-daypart',
+  purchase_price:'p-purchase-price', purchase_date:'p-purchase-date',
+  rating:'p-rating', longevity_personal:'p-longevity-personal', occasion_fit:'p-occasion-fit',
+  notes_personal:'p-notes-personal', review:'p-review',
+  item_status:'p-item-status', source_type:'p-source-type', source_raw:'p-source-raw',
+};
+
+function togglePerfumeFields() {
+  const isPerfume = document.getElementById('f-category').value === '香水';
+  document.getElementById('perfume-fields').style.display = isPerfume ? '' : 'none';
+}
+
+function collectPerfumeAttrs() {
+  const attrs = {};
+  Object.keys(PERFUME_FIELD_MAP).forEach(key => {
+    const el = document.getElementById(PERFUME_FIELD_MAP[key]);
+    if (!el) { attrs[key] = PERFUME_MULTI_FIELDS.includes(key) ? [] : ''; return; }
+    const raw = el.value.trim();
+    attrs[key] = PERFUME_MULTI_FIELDS.includes(key)
+      ? raw.split(',').map(s => s.trim()).filter(Boolean)
+      : raw;
+  });
+  return attrs;
+}
+
+function fillPerfumeAttrs(attrs) {
+  attrs = attrs || {};
+  Object.keys(PERFUME_FIELD_MAP).forEach(key => {
+    const el = document.getElementById(PERFUME_FIELD_MAP[key]);
+    if (!el) return;
+    const v = attrs[key];
+    el.value = PERFUME_MULTI_FIELDS.includes(key) ? (Array.isArray(v) ? v.join(', ') : (v||'')) : (v==null?'':v);
+  });
+  // 狀態/來源有預設值，讀不到資料時保留下拉的預設選項，不強制清空
+  if (!attrs.item_status)  document.getElementById('p-item-status').value  = '已擁有';
+  if (!attrs.source_type)  document.getElementById('p-source-type').value  = '手動';
+}
+
+function clearPerfumeFields() {
+  Object.values(PERFUME_FIELD_MAP).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('p-item-status').value = '已擁有';
+  document.getElementById('p-source-type').value = '手動';
+}
+
 // ── 儲存 ─────────────────────────────────────────────────────
 async function saveItem() {
   const name = document.getElementById('f-name').value.trim();
@@ -577,6 +736,7 @@ async function saveItem() {
       if (up.error) throw new Error('圖片上傳失敗：' + up.error);
       finalImgUrl = up.imgUrl;
     }
+    const category = document.getElementById('f-category').value;
     const item = {
       name, url: document.getElementById('inp-url').value.trim(),
       price: parseFloat(document.getElementById('f-price').value) || 0,
@@ -586,7 +746,10 @@ async function saveItem() {
       tags: document.getElementById('f-tags').value.split(',').map(t=>t.trim()).filter(Boolean),
       note: document.getElementById('f-note').value.trim(),
       imgUrl: finalImgUrl,
+      category,
     };
+    // 【新增】類型為香水時一併送出明細，後端會在同一次執行內寫入兩張表
+    if (category === '香水') item.attrs = collectPerfumeAttrs();
     const res = editingId
       ? await apiPost({ action:'update', id: editingId, item })
       : await apiPost({ action:'save', item });
@@ -639,6 +802,9 @@ function editItem(id) {
   document.getElementById('f-priority').value = item.priority || 'high';
   document.getElementById('f-tags').value     = (item.tags||[]).join(', ');
   document.getElementById('f-note').value     = item.note || '';
+  document.getElementById('f-category').value = item.category || '';
+  togglePerfumeFields();
+  if (item.category === '香水') fillPerfumeAttrs(item.attrs); else clearPerfumeFields();
   const eimg = safeUrl(item.imgUrl);
   if (eimg) { imgRemote = eimg; setImgZone(eimg); }
   /* 【修正】編輯狀態可視化：原本切走再填新品會靜默覆蓋舊商品 */
@@ -661,10 +827,22 @@ function resetAll() {
   ['f-name','f-price','f-shop','f-tags','f-note'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f-status').value   = '喜歡';
   document.getElementById('f-priority').value = 'high';
+  document.getElementById('f-category').value = '';
+  clearPerfumeFields(); togglePerfumeFields();
   clearImg(); editingId = null;
   document.getElementById('edit-bar').classList.remove('show');
   document.getElementById('save-btn').textContent = '儲存商品';
   ['name','price','shop','img'].forEach(k => ab(k, false));
+}
+
+// ── 【新增】香水卡片摘要（濃度＋香調家族，資料已由 actionList 一併 join）──
+function renderPerfumeSummary(attrs) {
+  const parts = [];
+  if (attrs.concentration) parts.push(esc(attrs.concentration));
+  if (attrs.family && attrs.family.length) parts.push(esc(attrs.family.join('、')));
+  if (attrs.rating) parts.push('★'.repeat(Number(attrs.rating)||0));
+  if (!parts.length) return '';
+  return `<div class="item-note" style="color:var(--accent)">${parts.join(' · ')}</div>`;
 }
 
 // ── Render ────────────────────────────────────────────────────
@@ -707,8 +885,10 @@ function renderList() {
         <div class="item-badges">
           <span class="badge ${sc}">${esc(item.status)}</span>
           <span class="badge ${pc}">${esc(pLabel[item.priority]||item.priority)}</span>
+          ${item.category?`<span class="badge">${esc(item.category)}</span>`:''}
           ${(item.tags||[]).map(t=>`<span class="badge">${esc(t)}</span>`).join('')}
         </div>
+        ${item.category==='香水' && item.attrs ? renderPerfumeSummary(item.attrs) : ''}
         ${item.note?`<div class="item-note">${esc(item.note)}</div>`:''}
         <div class="item-actions">
           ${linkUrl?`<a href="${esc(linkUrl)}" target="_blank" rel="noopener">🔗</a>`:''}
